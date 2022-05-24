@@ -77,7 +77,16 @@ status_t Client::createSurface(const String8& name, uint32_t w, uint32_t h, Pixe
                                LayerMetadata metadata, sp<IBinder>* handle,
                                sp<IGraphicBufferProducer>* gbp) {
     // We rely on createLayer to check permissions.
-    return mFlinger->createLayer(name, this, w, h, format, flags, std::move(metadata), handle, gbp,
+    return mFlinger->createLayer(name, String8(""), this, w, h, format, flags, std::move(metadata), handle, gbp,
+                                 parentHandle);
+}
+
+status_t Client::createSurfaceX(const String8& name, const String8& systemname, uint32_t w, uint32_t h, PixelFormat format,
+                               uint32_t flags, const sp<IBinder>& parentHandle,
+                               LayerMetadata metadata, sp<IBinder>* handle,
+                               sp<IGraphicBufferProducer>* gbp) {
+    // We rely on createLayer to check permissions.
+    return mFlinger->createLayer(name, systemname, this, w, h, format, flags, std::move(metadata), handle, gbp,
                                  parentHandle);
 }
 
@@ -102,7 +111,32 @@ status_t Client::createWithSurfaceParent(const String8& name, uint32_t w, uint32
         return BAD_VALUE;
     }
 
-    return mFlinger->createLayer(name, this, w, h, format, flags, std::move(metadata), handle, gbp,
+    return mFlinger->createLayer(name, String8(""), this, w, h, format, flags, std::move(metadata), handle, gbp,
+                                 nullptr, layer);
+}
+
+status_t Client::createWithSurfaceParentX(const String8& name, const String8& systemname, uint32_t w, uint32_t h,
+                                         PixelFormat format, uint32_t flags,
+                                         const sp<IGraphicBufferProducer>& parent,
+                                         LayerMetadata metadata, sp<IBinder>* handle,
+                                         sp<IGraphicBufferProducer>* gbp) {
+    if (mFlinger->authenticateSurfaceTexture(parent) == false) {
+        ALOGE("failed to authenticate surface texture");
+        // The extra parent layer check below before returning is to help with debugging
+        // b/134888387. Once the bug is fixed the check can be deleted.
+        if ((static_cast<MonitoredProducer*>(parent.get()))->getLayer() == nullptr) {
+            ALOGE("failed to find parent layer");
+        }
+        return BAD_VALUE;
+    }
+
+    const auto& layer = (static_cast<MonitoredProducer*>(parent.get()))->getLayer();
+    if (layer == nullptr) {
+        ALOGE("failed to find parent layer");
+        return BAD_VALUE;
+    }
+
+    return mFlinger->createLayer(name, systemname, this, w, h, format, flags, std::move(metadata), handle, gbp,
                                  nullptr, layer);
 }
 

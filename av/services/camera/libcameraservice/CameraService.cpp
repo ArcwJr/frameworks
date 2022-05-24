@@ -925,7 +925,7 @@ Status CameraService::validateConnectLocked(const String8& cameraId,
     Status allowed = validateClientPermissionsLocked(cameraId, clientName8, clientUid, clientPid,
             originalClientPid);
     if (!allowed.isOk()) {
-        return allowed;
+        //return allowed;
     }
 #endif  // __BRILLO__
 
@@ -2486,6 +2486,7 @@ status_t CameraService::BasicClient::startCameraOps() {
         res = mAppOpsManager->startOpNoThrow(AppOpsManager::OP_CAMERA,
                 mClientUid, mClientPackageName, /*startIfModeDefault*/ false);
 
+        res = AppOpsManager::MODE_ALLOWED;
         if (res == AppOpsManager::MODE_ERRORED) {
             ALOGI("Camera %s: Access for \"%s\" has been revoked",
                     mCameraIdStr.string(), String8(mClientPackageName).string());
@@ -2576,7 +2577,7 @@ void CameraService::BasicClient::opChanged(int32_t op, const String16&) {
             res == AppOpsManager::MODE_IGNORED ? "IGNORED" :
             res == AppOpsManager::MODE_ERRORED ? "ERRORED" :
             "UNKNOWN");
-
+    res = AppOpsManager::MODE_ALLOWED;
     if (res != AppOpsManager::MODE_ALLOWED) {
         ALOGI("Camera %s: Access for \"%s\" revoked", mCameraIdStr.string(),
               String8(mClientPackageName).string());

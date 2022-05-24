@@ -84,6 +84,17 @@ public:
           : SafeBnInterface<ISurfaceComposerClient>("BnSurfaceComposerClient") {}
 
     status_t onTransact(uint32_t code, const Parcel& data, Parcel* reply, uint32_t flags) override;
+
+    virtual status_t createSurfaceX(const String8& name, const String8& systemname, uint32_t w, uint32_t h, PixelFormat format,
+                                   uint32_t flags, const sp<IBinder>& parent,
+                                   LayerMetadata metadata, sp<IBinder>* handle,
+                                   sp<IGraphicBufferProducer>* gbp)=0;
+
+    virtual status_t createWithSurfaceParentX(const String8& name, const String8& systemname, uint32_t w, uint32_t h,
+                                             PixelFormat format, uint32_t flags,
+                                             const sp<IGraphicBufferProducer>& parent,
+                                             LayerMetadata metadata, sp<IBinder>* handle,
+                                             sp<IGraphicBufferProducer>* gbp)=0;
 };
 
 } // namespace android

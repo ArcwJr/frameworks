@@ -278,24 +278,26 @@ TEST_F(OutputTest, getDirtyRegionWithRepaintEverythingFalse) {
 TEST_F(OutputTest, belongsInOutputFiltersAsExpected) {
     const uint32_t layerStack1 = 123u;
     const uint32_t layerStack2 = 456u;
+    const String8 activesystemname = String8("");
+    const String8 systemname = String8("");
 
     // If the output accepts layerStack1 and internal-only layers....
     mOutput.setLayerStackFilter(layerStack1, true);
 
     // Any layer with layerStack1 belongs to it, internal-only or not.
-    EXPECT_TRUE(mOutput.belongsInOutput(layerStack1, false));
-    EXPECT_TRUE(mOutput.belongsInOutput(layerStack1, true));
-    EXPECT_FALSE(mOutput.belongsInOutput(layerStack2, true));
-    EXPECT_FALSE(mOutput.belongsInOutput(layerStack2, false));
+    EXPECT_TRUE(mOutput.belongsInOutput(layerStack1, activesystemname, systemname, false));
+    EXPECT_TRUE(mOutput.belongsInOutput(layerStack1, activesystemname, systemname, true));
+    EXPECT_FALSE(mOutput.belongsInOutput(layerStack2, activesystemname, systemname, true));
+    EXPECT_FALSE(mOutput.belongsInOutput(layerStack2, activesystemname, systemname, false));
 
     // If the output accepts layerStack21 but not internal-only layers...
     mOutput.setLayerStackFilter(layerStack1, false);
 
     // Only non-internal layers with layerStack1 belong to it.
-    EXPECT_TRUE(mOutput.belongsInOutput(layerStack1, false));
-    EXPECT_FALSE(mOutput.belongsInOutput(layerStack1, true));
-    EXPECT_FALSE(mOutput.belongsInOutput(layerStack2, true));
-    EXPECT_FALSE(mOutput.belongsInOutput(layerStack2, false));
+    EXPECT_TRUE(mOutput.belongsInOutput(layerStack1, activesystemname, systemname, false));
+    EXPECT_FALSE(mOutput.belongsInOutput(layerStack1, activesystemname, systemname, true));
+    EXPECT_FALSE(mOutput.belongsInOutput(layerStack2, activesystemname, systemname, true));
+    EXPECT_FALSE(mOutput.belongsInOutput(layerStack2, activesystemname, systemname, false));
 }
 
 /* ------------------------------------------------------------------------

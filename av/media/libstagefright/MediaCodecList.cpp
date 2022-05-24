@@ -182,7 +182,7 @@ sp<IMediaCodecList> MediaCodecList::getInstance() {
     Mutex::Autolock _l(sRemoteInitMutex);
     if (sRemoteList == nullptr) {
         sp<IBinder> binder =
-            defaultServiceManager()->getService(String16("media.player"));
+            initdefaultServiceManager()->getService(String16("media.player"));
         sp<IMediaPlayerService> service =
             interface_cast<IMediaPlayerService>(binder);
         if (service.get() != nullptr) {

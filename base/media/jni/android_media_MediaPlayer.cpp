@@ -1034,7 +1034,7 @@ static jint
 android_media_MediaPlayer_pullBatteryData(
         JNIEnv *env, jobject /* thiz */, jobject java_reply)
 {
-    sp<IBinder> binder = defaultServiceManager()->getService(String16("media.player"));
+    sp<IBinder> binder = initdefaultServiceManager()->getService(String16("media.player"));
     sp<IMediaPlayerService> service = interface_cast<IMediaPlayerService>(binder);
     if (service.get() == NULL) {
         jniThrowException(env, "java/lang/RuntimeException", "cannot get MediaPlayerService");

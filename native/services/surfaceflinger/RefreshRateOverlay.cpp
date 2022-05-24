@@ -29,7 +29,7 @@ RefreshRateOverlay::RefreshRateOverlay(SurfaceFlinger& flinger)
 
 bool RefreshRateOverlay::createLayer() {
     const status_t ret =
-            mFlinger.createLayer(String8("RefreshRateOverlay"), mClient, 0, 0,
+            mFlinger.createLayer(String8("RefreshRateOverlay"), String8(""), mClient, 0, 0,
                                  PIXEL_FORMAT_RGBA_8888, ISurfaceComposerClient::eFXSurfaceColor,
                                  LayerMetadata(), &mIBinder, &mGbp, nullptr);
     if (ret) {

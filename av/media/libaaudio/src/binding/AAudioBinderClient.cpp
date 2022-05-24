@@ -82,7 +82,7 @@ const sp<IAAudioService> AAudioBinderClient::getAAudioService() {
         Mutex::Autolock _l(mServiceLock);
         if (mAAudioService.get() == nullptr) {
             sp<IBinder> binder;
-            sp<IServiceManager> sm = defaultServiceManager();
+            sp<IServiceManager> sm = android::initdefaultServiceManager();
             // Try several times to get the service.
             int retries = 4;
             do {

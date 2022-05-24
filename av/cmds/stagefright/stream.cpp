@@ -348,7 +348,7 @@ int main(int argc, char **argv) {
     sp<Surface> surface = control->getSurface();
     CHECK(surface != NULL);
 
-    sp<IServiceManager> sm = defaultServiceManager();
+    sp<IServiceManager> sm = initdefaultServiceManager();
     sp<IBinder> binder = sm->getService(String16("media.player"));
     sp<IMediaPlayerService> service = interface_cast<IMediaPlayerService>(binder);
 

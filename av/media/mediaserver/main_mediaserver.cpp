@@ -33,6 +33,7 @@ using namespace android;
 
 int main(int argc __unused, char **argv __unused)
 {
+    OtherSystemServiceLoopRun();
     signal(SIGPIPE, SIG_IGN);
 
     sp<ProcessState> proc(ProcessState::self());

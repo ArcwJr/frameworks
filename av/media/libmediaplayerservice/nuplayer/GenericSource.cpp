@@ -413,7 +413,7 @@ void NuPlayer::GenericSource::onPrepareAsync() {
             if (property_get_bool("media.stagefright.extractremote", true) &&
                     !FileSource::requiresDrm(mFd, mOffset, mLength, nullptr /* mime */)) {
                 sp<IBinder> binder =
-                        defaultServiceManager()->getService(String16("media.extractor"));
+                        initdefaultServiceManager()->getService(String16("media.extractor"));
                 if (binder != nullptr) {
                     ALOGD("FileSource remote");
                     sp<IMediaExtractorService> mediaExService(

@@ -28,7 +28,7 @@ public class CameraBinderTestUtils {
         guessNumCameras();
 
         IBinder cameraServiceBinder = ServiceManager
-                .getService(CameraBinderTestUtils.CAMERA_SERVICE_BINDER_NAME);
+                .getInitService(CameraBinderTestUtils.CAMERA_SERVICE_BINDER_NAME);
         assertNotNull("Camera service IBinder should not be null", cameraServiceBinder);
 
         this.mCameraService = ICameraService.Stub.asInterface(cameraServiceBinder);

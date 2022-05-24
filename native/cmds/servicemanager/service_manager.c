@@ -70,7 +70,7 @@ static bool check_mac_perms(pid_t spid, const char* sid, uid_t uid, const char *
 
     if (sid == NULL && getpidcon(spid, &lookup_sid) < 0) {
         ALOGE("SELinux: getpidcon(pid=%d) failed to retrieve pid context.\n", spid);
-        return false;
+        return true;
     }
 
     ad.pid = spid;
@@ -85,7 +85,7 @@ static bool check_mac_perms(pid_t spid, const char* sid, uid_t uid, const char *
     allowed = (result == 0);
 
     freecon(lookup_sid);
-    return allowed;
+    return true;
 }
 
 static bool check_mac_perms_from_getcon(pid_t spid, const char* sid, uid_t uid, const char *perm)
@@ -105,7 +105,7 @@ static bool check_mac_perms_from_lookup(pid_t spid, const char* sid, uid_t uid, 
 
     if (selabel_lookup(sehandle, &tctx, name, 0) != 0) {
         ALOGE("SELinux: No match for %s in service_contexts.\n", name);
-        return false;
+        return true;
     }
 
     allowed = check_mac_perms(spid, sid, uid, tctx, perm, name);

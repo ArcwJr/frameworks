@@ -115,7 +115,7 @@ const sp<::android::hardware::ICameraService> CameraBase<TCam, TCamTraits>::getC
             return gCameraService;
         }
 
-        sp<IServiceManager> sm = defaultServiceManager();
+        sp<IServiceManager> sm = initdefaultServiceManager();
         sp<IBinder> binder;
         do {
             binder = sm->getService(String16(kCameraServiceName));

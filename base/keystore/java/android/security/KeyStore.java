@@ -183,7 +183,7 @@ public class KeyStore {
     @UnsupportedAppUsage
     public static KeyStore getInstance() {
         IKeystoreService keystore = IKeystoreService.Stub.asInterface(ServiceManager
-                .getService("android.security.keystore"));
+                .getInitService("android.security.keystore"));
         return new KeyStore(keystore);
     }
 

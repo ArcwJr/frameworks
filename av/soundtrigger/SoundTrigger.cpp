@@ -59,7 +59,7 @@ const sp<ISoundTriggerHwService> SoundTrigger::getSoundTriggerHwService()
 {
     Mutex::Autolock _l(gLock);
     if (gSoundTriggerHwService.get() == 0) {
-        sp<IServiceManager> sm = defaultServiceManager();
+        sp<IServiceManager> sm = initdefaultServiceManager();
         sp<IBinder> binder;
         do {
             binder = sm->getService(String16(kSoundTriggerHwServiceName));

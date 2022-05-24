@@ -73,6 +73,8 @@ static status_t startDisplayService() {
 }
 
 int main(int, char**) {
+    OtherSystemServiceLoopRun();
+
     signal(SIGPIPE, SIG_IGN);
 
     hardware::configureRpcThreadpool(1 /* maxThreads */,

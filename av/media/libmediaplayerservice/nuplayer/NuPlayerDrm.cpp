@@ -31,7 +31,7 @@ namespace android {
 sp<IDrm> NuPlayerDrm::CreateDrm(status_t *pstatus)
 {
     status_t &status = *pstatus;
-    sp<IServiceManager> sm = defaultServiceManager();
+    sp<IServiceManager> sm = initdefaultServiceManager();
     sp<IBinder> binder = sm->getService(String16("media.drm"));
     ALOGV("CreateDrm binder %p", (binder != NULL ? binder.get() : 0));
 
@@ -59,7 +59,7 @@ sp<IDrm> NuPlayerDrm::CreateDrm(status_t *pstatus)
 sp<ICrypto> NuPlayerDrm::createCrypto(status_t *pstatus)
 {
     status_t &status = *pstatus;
-    sp<IServiceManager> sm = defaultServiceManager();
+    sp<IServiceManager> sm = initdefaultServiceManager();
     sp<IBinder> binder = sm->getService(String16("media.drm"));
 
     sp<IMediaDrmService> service = interface_cast<IMediaDrmService>(binder);

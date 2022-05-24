@@ -118,7 +118,7 @@ static pthread_once_t sMediaLogOnce = PTHREAD_ONCE_INIT;
 
 static void sMediaLogInit()
 {
-    sMediaLogServiceAsBinder = defaultServiceManager()->getService(String16("media.log"));
+    sMediaLogServiceAsBinder = initdefaultServiceManager()->getService(String16("media.log"));
     if (sMediaLogServiceAsBinder != 0) {
         sMediaLogService = interface_cast<IMediaLogService>(sMediaLogServiceAsBinder);
     }

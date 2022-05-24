@@ -42,6 +42,7 @@ using namespace android;
 
 int main(int argc __unused, char **argv)
 {
+    OtherSystemServiceLoopRun();
     // TODO: update with refined parameters
     limitProcessMemory(
         "audio.maxmem", /* "ro.audio.maxmem", property that defines limit */

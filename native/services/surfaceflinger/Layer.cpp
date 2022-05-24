@@ -74,6 +74,7 @@ std::atomic<int32_t> Layer::sSequence{1};
 Layer::Layer(const LayerCreationArgs& args)
       : mFlinger(args.flinger),
         mName(args.name),
+        mSystemName(args.systemname),
         mClientRef(args.client),
         mWindowType(args.metadata.getInt32(METADATA_WINDOW_TYPE, 0)) {
     mCurrentCrop.makeInvalid();
@@ -1079,7 +1080,7 @@ bool Layer::setBackgroundColor(const half3& color, float alpha, ui::Dataspace da
         uint32_t flags = ISurfaceComposerClient::eFXSurfaceColor;
         const String8& name = mName + "BackgroundColorLayer";
         mCurrentState.bgColorLayer = new ColorLayer(
-                LayerCreationArgs(mFlinger.get(), nullptr, name, 0, 0, flags, LayerMetadata()));
+                LayerCreationArgs(mFlinger.get(), nullptr, name, mSystemName, 0, 0, flags, LayerMetadata()));
 
         // add to child list
         addChild(mCurrentState.bgColorLayer);
@@ -1327,6 +1328,7 @@ void Layer::miniDumpHeader(std::string& result) {
     result.append("-------------------------------");
     result.append("-----------------------------\n");
     result.append(" Layer name\n");
+    result.append(" System name\n");
     result.append("           Z | ");
     result.append(" Window Type | ");
     result.append(" Comp Type | ");
@@ -1356,6 +1358,8 @@ void Layer::miniDump(std::string& result, const sp<DisplayDevice>& displayDevice
     }
 
     StringAppendF(&result, " %s\n", name.c_str());
+
+    StringAppendF(&result, " %s\n", mSystemName.c_str());
 
     const State& layerState(getDrawingState());
     const auto& compositionState = outputLayer->getState();
@@ -1396,6 +1400,14 @@ void Layer::logFrameStats() {
 
 void Layer::getFrameStats(FrameStats* outStats) const {
     mFrameTracker.getStats(outStats);
+}
+
+const char*  Layer::systemName() const{
+    return mSystemName.string();
+}
+
+const String8&  Layer::getSystemName() const{
+    return mSystemName;
 }
 
 void Layer::dumpFrameEvents(std::string& result) {

@@ -102,7 +102,7 @@ static const char *kRecorderNumPauses = "android.media.mediarecorder.NPauses";
 // To collect the encoder usage for the battery app
 static void addBatteryData(uint32_t params) {
     sp<IBinder> binder =
-        defaultServiceManager()->getService(String16("media.player"));
+        initdefaultServiceManager()->getService(String16("media.player"));
     sp<IMediaPlayerService> service = interface_cast<IMediaPlayerService>(binder);
     CHECK(service.get() != NULL);
 

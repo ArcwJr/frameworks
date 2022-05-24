@@ -41,7 +41,7 @@ void VideoFrameScheduler::updateVsync() {
 
     if (mComposer == NULL) {
         String16 name("SurfaceFlinger");
-        sp<IServiceManager> sm = defaultServiceManager();
+        sp<IServiceManager> sm = initdefaultServiceManager();
         mComposer = interface_cast<ISurfaceComposer>(sm->checkService(name));
     }
     if (mComposer != NULL) {

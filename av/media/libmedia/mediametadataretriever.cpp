@@ -39,7 +39,7 @@ const sp<IMediaPlayerService> MediaMetadataRetriever::getService()
 {
     Mutex::Autolock lock(sServiceLock);
     if (sService == 0) {
-        sp<IServiceManager> sm = defaultServiceManager();
+        sp<IServiceManager> sm = initdefaultServiceManager();
         sp<IBinder> binder;
         do {
             binder = sm->getService(String16("media.player"));

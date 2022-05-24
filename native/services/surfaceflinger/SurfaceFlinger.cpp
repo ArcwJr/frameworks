@@ -2253,7 +2253,7 @@ void SurfaceFlinger::computeLayerBounds() {
         const auto display = displayDevice->getCompositionDisplay();
         for (const auto& layer : mDrawingState.layersSortedByZ) {
             // only consider the layers on the given layer stack
-            if (!display->belongsInOutput(layer->getLayerStack(), layer->getPrimaryDisplayOnly())) {
+            if (!display->belongsInOutput(layer->getLayerStack(), displayDevice->getActiveSystemName(), layer->getSystemName(), layer->getPrimaryDisplayOnly())) {
                 continue;
             }
 
@@ -2298,7 +2298,7 @@ void SurfaceFlinger::rebuildLayerStacks() {
 
                     bool needsOutputLayer = false;
 
-                    if (display->belongsInOutput(layer->getLayerStack(),
+                    if (display->belongsInOutput(layer->getLayerStack(), displayDevice->getActiveSystemName(), layer->getSystemName(),
                                                  layer->getPrimaryDisplayOnly())) {
                         Region drawRegion(tr.transform(
                                 layer->visibleNonTransparentRegion));
@@ -2949,7 +2949,7 @@ void SurfaceFlinger::handleTransactionLocked(uint32_t transactionFlags)
                 hintDisplay = nullptr;
                 for (const auto& [token, display] : mDisplays) {
                     if (display->getCompositionDisplay()
-                                ->belongsInOutput(layer->getLayerStack(),
+                                ->belongsInOutput(layer->getLayerStack(), display->getActiveSystemName(), layer->getSystemName(),
                                                   layer->getPrimaryDisplayOnly())) {
                         if (hintDisplay) {
                             hintDisplay = nullptr;
@@ -3029,20 +3029,45 @@ void SurfaceFlinger::updateInputFlinger() {
     mInputWindowCommands.clear();
 }
 
+#define MAX_CONTEXT 6
+
 void SurfaceFlinger::updateInputWindowInfo() {
-    std::vector<InputWindowInfo> inputHandles;
+    std::vector<std::vector<InputWindowInfo>> inputHandles(MAX_CONTEXT);
+    int i = 0;
 
     mDrawingState.traverseInReverseZOrder([&](Layer* layer) {
         if (layer->hasInput()) {
             // When calculating the screen bounds we ignore the transparent region since it may
             // result in an unwanted offset.
-            inputHandles.push_back(layer->fillInputInfo());
+            if(layer->getSystemName() ==String8("")){
+                inputHandles[0].push_back(layer->fillInputInfo());
+            }else{
+                sscanf(layer->systemName(), "cell%d",&i);
+                if(i > 0 && i < MAX_CONTEXT){
+                    inputHandles[i].push_back(layer->fillInputInfo());
+                }
+            }
         }
     });
 
-    mInputFlinger->setInputWindows(inputHandles,
-                                   mInputWindowCommands.syncInputWindows ? mSetInputWindowsListener
-                                                                         : nullptr);
+    for(i = 0; i < MAX_CONTEXT; i++)
+    {
+        if( i == 0){
+            mInputFlinger->setInputWindows(inputHandles[0],
+                                mInputWindowCommands.syncInputWindows ? mSetInputWindowsListener
+                                                                        : nullptr);
+        }else{
+            const sp<IServiceManager> sm = OtherServiceManager(i);
+            if (sm != nullptr) {
+                sp<IInputFlinger>  mInputFlinger1 = interface_cast<IInputFlinger>(sm->getService( String16("inputflinger")));
+                if (mInputFlinger1 != nullptr) {
+                    mInputFlinger1->setInputWindows(inputHandles[i],
+                                mInputWindowCommands.syncInputWindows ? mSetInputWindowsListener
+                                                                        : nullptr);
+                }
+            }
+        }
+    }
 }
 
 void SurfaceFlinger::commitInputWindowCommands() {
@@ -3171,7 +3196,7 @@ void SurfaceFlinger::computeVisibleRegions(const sp<const DisplayDevice>& displa
         const Layer::State& s(layer->getDrawingState());
 
         // only consider the layers on the given layer stack
-        if (!display->belongsInOutput(layer->getLayerStack(), layer->getPrimaryDisplayOnly())) {
+        if (!display->belongsInOutput(layer->getLayerStack(), displayDevice->getActiveSystemName(), layer->getSystemName(), layer->getPrimaryDisplayOnly())) {
             return;
         }
 
@@ -3297,7 +3322,7 @@ void SurfaceFlinger::computeVisibleRegions(const sp<const DisplayDevice>& displa
 void SurfaceFlinger::invalidateLayerStack(const sp<const Layer>& layer, const Region& dirty) {
     for (const auto& [token, displayDevice] : mDisplays) {
         auto display = displayDevice->getCompositionDisplay();
-        if (display->belongsInOutput(layer->getLayerStack(), layer->getPrimaryDisplayOnly())) {
+        if (display->belongsInOutput(layer->getLayerStack(), displayDevice->getActiveSystemName(), layer->getSystemName(), layer->getPrimaryDisplayOnly())) {
             display->editState().dirtyRegion.orSelf(dirty);
         }
     }
@@ -4244,7 +4269,7 @@ uint32_t SurfaceFlinger::addInputWindowCommands(const InputWindowCommands& input
     return flags;
 }
 
-status_t SurfaceFlinger::createLayer(const String8& name, const sp<Client>& client, uint32_t w,
+status_t SurfaceFlinger::createLayer(const String8& name, const String8& systemname, const sp<Client>& client, uint32_t w,
                                      uint32_t h, PixelFormat format, uint32_t flags,
                                      LayerMetadata metadata, sp<IBinder>* handle,
                                      sp<IGraphicBufferProducer>* gbp,
@@ -4280,12 +4305,12 @@ status_t SurfaceFlinger::createLayer(const String8& name, const sp<Client>& clie
 
     switch (flags & ISurfaceComposerClient::eFXSurfaceMask) {
         case ISurfaceComposerClient::eFXSurfaceBufferQueue:
-            result = createBufferQueueLayer(client, uniqueName, w, h, flags, std::move(metadata),
+            result = createBufferQueueLayer(client, uniqueName, systemname, w, h, flags, std::move(metadata),
                                             format, handle, gbp, &layer);
 
             break;
         case ISurfaceComposerClient::eFXSurfaceBufferState:
-            result = createBufferStateLayer(client, uniqueName, w, h, flags, std::move(metadata),
+            result = createBufferStateLayer(client, uniqueName, systemname, w, h, flags, std::move(metadata),
                                             handle, &layer);
             break;
         case ISurfaceComposerClient::eFXSurfaceColor:
@@ -4296,7 +4321,7 @@ status_t SurfaceFlinger::createLayer(const String8& name, const sp<Client>& clie
                 return BAD_VALUE;
             }
 
-            result = createColorLayer(client, uniqueName, w, h, flags, std::move(metadata), handle,
+            result = createColorLayer(client, uniqueName, systemname, w, h, flags, std::move(metadata), handle,
                                       &layer);
             break;
         case ISurfaceComposerClient::eFXSurfaceContainer:
@@ -4306,7 +4331,7 @@ status_t SurfaceFlinger::createLayer(const String8& name, const sp<Client>& clie
                       int(w), int(h));
                 return BAD_VALUE;
             }
-            result = createContainerLayer(client, uniqueName, w, h, flags, std::move(metadata),
+            result = createContainerLayer(client, uniqueName, systemname, w, h, flags, std::move(metadata),
                                           handle, &layer);
             break;
         default:
@@ -4362,7 +4387,7 @@ String8 SurfaceFlinger::getUniqueLayerName(const String8& name)
     return uniqueName;
 }
 
-status_t SurfaceFlinger::createBufferQueueLayer(const sp<Client>& client, const String8& name,
+status_t SurfaceFlinger::createBufferQueueLayer(const sp<Client>& client, const String8& name, const String8& systemname,
                                                 uint32_t w, uint32_t h, uint32_t flags,
                                                 LayerMetadata metadata, PixelFormat& format,
                                                 sp<IBinder>* handle,
@@ -4380,7 +4405,7 @@ status_t SurfaceFlinger::createBufferQueueLayer(const sp<Client>& client, const 
     }
 
     sp<BufferQueueLayer> layer = getFactory().createBufferQueueLayer(
-            LayerCreationArgs(this, client, name, w, h, flags, std::move(metadata)));
+            LayerCreationArgs(this, client, name, systemname, w, h, flags, std::move(metadata)));
     status_t err = layer->setDefaultBufferProperties(w, h, format);
     if (err == NO_ERROR) {
         *handle = layer->getHandle();
@@ -4392,33 +4417,33 @@ status_t SurfaceFlinger::createBufferQueueLayer(const sp<Client>& client, const 
     return err;
 }
 
-status_t SurfaceFlinger::createBufferStateLayer(const sp<Client>& client, const String8& name,
+status_t SurfaceFlinger::createBufferStateLayer(const sp<Client>& client, const String8& name, const String8& systemname,
                                                 uint32_t w, uint32_t h, uint32_t flags,
                                                 LayerMetadata metadata, sp<IBinder>* handle,
                                                 sp<Layer>* outLayer) {
     sp<BufferStateLayer> layer = getFactory().createBufferStateLayer(
-            LayerCreationArgs(this, client, name, w, h, flags, std::move(metadata)));
+            LayerCreationArgs(this, client, name, systemname, w, h, flags, std::move(metadata)));
     *handle = layer->getHandle();
     *outLayer = layer;
 
     return NO_ERROR;
 }
 
-status_t SurfaceFlinger::createColorLayer(const sp<Client>& client, const String8& name, uint32_t w,
+status_t SurfaceFlinger::createColorLayer(const sp<Client>& client, const String8& name, const String8& systemname, uint32_t w,
                                           uint32_t h, uint32_t flags, LayerMetadata metadata,
                                           sp<IBinder>* handle, sp<Layer>* outLayer) {
     *outLayer = getFactory().createColorLayer(
-            LayerCreationArgs(this, client, name, w, h, flags, std::move(metadata)));
+            LayerCreationArgs(this, client, name, systemname, w, h, flags, std::move(metadata)));
     *handle = (*outLayer)->getHandle();
     return NO_ERROR;
 }
 
-status_t SurfaceFlinger::createContainerLayer(const sp<Client>& client, const String8& name,
+status_t SurfaceFlinger::createContainerLayer(const sp<Client>& client, const String8& name, const String8& systemname,
                                               uint32_t w, uint32_t h, uint32_t flags,
                                               LayerMetadata metadata, sp<IBinder>* handle,
                                               sp<Layer>* outLayer) {
     *outLayer = getFactory().createContainerLayer(
-            LayerCreationArgs(this, client, name, w, h, flags, std::move(metadata)));
+            LayerCreationArgs(this, client, name, systemname, w, h, flags, std::move(metadata)));
     *handle = (*outLayer)->getHandle();
     return NO_ERROR;
 }
@@ -5232,6 +5257,8 @@ status_t SurfaceFlinger::CheckTransactCodeCredentials(uint32_t code) {
         case GET_PROTECTED_CONTENT_SUPPORT:
         case IS_WIDE_COLOR_DISPLAY:
         case GET_DISPLAY_BRIGHTNESS_SUPPORT:
+        case ENTERSELF:
+        case EXITSELF:
         case SET_DISPLAY_BRIGHTNESS: {
             return OK;
         }
@@ -5818,7 +5845,7 @@ status_t SurfaceFlinger::captureLayers(
             } else {
                 Rect bounds = getBounds();
                 screenshotParentLayer = mFlinger->getFactory().createContainerLayer(
-                        LayerCreationArgs(mFlinger, nullptr, String8("Screenshot Parent"),
+                        LayerCreationArgs(mFlinger, nullptr, String8("Screenshot Parent"), String8(""),
                                           bounds.getWidth(), bounds.getHeight(), 0,
                                           LayerMetadata()));
 
@@ -6157,12 +6184,12 @@ void SurfaceFlinger::traverseLayersInDisplay(const sp<const DisplayDevice>& disp
     // We loop through the first level of layers without traversing,
     // as we need to determine which layers belong to the requested display.
     for (const auto& layer : mDrawingState.layersSortedByZ) {
-        if (!layer->belongsToDisplay(display->getLayerStack(), false)) {
+        if (!layer->belongsToDisplay(display->getLayerStack(), display->getActiveSystemName(), false)) {
             continue;
         }
         // relative layers are traversed in Layer::traverseInZOrder
         layer->traverseInZOrder(LayerVector::StateSet::Drawing, [&](Layer* layer) {
-            if (!layer->belongsToDisplay(display->getLayerStack(), false)) {
+            if (!layer->belongsToDisplay(display->getLayerStack(), display->getActiveSystemName(), false)) {
                 return;
             }
             if (!layer->isVisible()) {
@@ -6285,6 +6312,18 @@ sp<Layer> SurfaceFlinger::fromHandle(const sp<IBinder>& handle) {
 
 void SurfaceFlinger::bufferErased(const client_cache_t& clientCacheId) {
     getRenderEngine().unbindExternalTextureBuffer(clientCacheId.id);
+}
+
+status_t SurfaceFlinger::enterSelf(){
+    invalidateHwcGeometry();
+    repaintEverything();
+    return NO_ERROR;
+}
+
+status_t SurfaceFlinger::exitSelf(){
+    //invalidateHwcGeometry();
+    //repaintEverything();
+    return NO_ERROR;
 }
 
 } // namespace android

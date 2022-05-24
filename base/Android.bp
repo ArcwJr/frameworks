@@ -248,6 +248,7 @@ java_defaults {
         "core/java/android/se/omapi/ISecureElementSession.aidl",
         "core/java/android/os/IBatteryPropertiesRegistrar.aidl",
         "core/java/android/os/ICancellationSignal.aidl",
+        "core/java/android/os/ICellsService.aidl",
         "core/java/android/os/IDeviceIdentifiersPolicyService.aidl",
         "core/java/android/os/IDeviceIdleController.aidl",
         "core/java/android/os/IHardwarePropertiesManager.aidl",

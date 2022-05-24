@@ -777,18 +777,18 @@ public class WifiServiceImpl extends BaseWifiService {
     }
 
     private void enforceNetworkSettingsPermission() {
-        mContext.enforceCallingOrSelfPermission(android.Manifest.permission.NETWORK_SETTINGS,
-                "WifiService");
+        //mContext.enforceCallingOrSelfPermission(android.Manifest.permission.NETWORK_SETTINGS,
+        //        "WifiService");
     }
 
     private void enforceNetworkStackPermission() {
-        mContext.enforceCallingOrSelfPermission(android.Manifest.permission.NETWORK_STACK,
-                "WifiService");
+        //mContext.enforceCallingOrSelfPermission(android.Manifest.permission.NETWORK_STACK,
+        //        "WifiService");
     }
 
     private void enforceAccessPermission() {
-        mContext.enforceCallingOrSelfPermission(android.Manifest.permission.ACCESS_WIFI_STATE,
-                "WifiService");
+        //mContext.enforceCallingOrSelfPermission(android.Manifest.permission.ACCESS_WIFI_STATE,
+        //        "WifiService");
     }
 
     /**
@@ -801,7 +801,7 @@ public class WifiServiceImpl extends BaseWifiService {
      */
     @CheckResult
     private int enforceChangePermission(String callingPackage) {
-        mAppOps.checkPackage(Binder.getCallingUid(), callingPackage);
+        /*mAppOps.checkPackage(Binder.getCallingUid(), callingPackage);
         if (checkNetworkSettingsPermission(Binder.getCallingPid(), Binder.getCallingUid())) {
             return MODE_ALLOWED;
         }
@@ -809,35 +809,36 @@ public class WifiServiceImpl extends BaseWifiService {
                 "WifiService");
 
         return mAppOps.noteOp(
-                AppOpsManager.OPSTR_CHANGE_WIFI_STATE, Binder.getCallingUid(), callingPackage);
+                AppOpsManager.OPSTR_CHANGE_WIFI_STATE, Binder.getCallingUid(), callingPackage);*/
+        return MODE_ALLOWED;
     }
 
     private void enforceLocationHardwarePermission() {
-        mContext.enforceCallingOrSelfPermission(Manifest.permission.LOCATION_HARDWARE,
-                "LocationHardware");
+        //mContext.enforceCallingOrSelfPermission(Manifest.permission.LOCATION_HARDWARE,
+        //        "LocationHardware");
     }
 
     private void enforceReadCredentialPermission() {
-        mContext.enforceCallingOrSelfPermission(android.Manifest.permission.READ_WIFI_CREDENTIAL,
-                                                "WifiService");
+        //mContext.enforceCallingOrSelfPermission(android.Manifest.permission.READ_WIFI_CREDENTIAL,
+        //                                        "WifiService");
     }
 
     private void enforceWorkSourcePermission() {
-        mContext.enforceCallingPermission(android.Manifest.permission.UPDATE_DEVICE_STATS,
-                "WifiService");
+        //mContext.enforceCallingPermission(android.Manifest.permission.UPDATE_DEVICE_STATS,
+        //        "WifiService");
 
     }
 
     private void enforceMulticastChangePermission() {
-        mContext.enforceCallingOrSelfPermission(
-                android.Manifest.permission.CHANGE_WIFI_MULTICAST_STATE,
-                "WifiService");
+        //mContext.enforceCallingOrSelfPermission(
+        //        android.Manifest.permission.CHANGE_WIFI_MULTICAST_STATE,
+        //        "WifiService");
     }
 
     private void enforceConnectivityInternalPermission() {
-        mContext.enforceCallingOrSelfPermission(
-                android.Manifest.permission.CONNECTIVITY_INTERNAL,
-                "ConnectivityService");
+        //mContext.enforceCallingOrSelfPermission(
+        //        android.Manifest.permission.CONNECTIVITY_INTERNAL,
+        //        "ConnectivityService");
     }
 
     private void enforceLocationPermission(String pkgName, int uid) {

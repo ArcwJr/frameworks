@@ -268,7 +268,7 @@ static status_t GetAppPackageName(String8 *packageName) {
 }
 
 static sp<IDrm> CreateDrm() {
-    sp<IServiceManager> sm = defaultServiceManager();
+    sp<IServiceManager> sm = initdefaultServiceManager();
     sp<IBinder> binder = sm->getService(String16("media.drm"));
 
     sp<IMediaDrmService> service = interface_cast<IMediaDrmService>(binder);

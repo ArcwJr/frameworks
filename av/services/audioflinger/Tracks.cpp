@@ -455,7 +455,7 @@ void AudioFlinger::PlaybackThread::OpPlayAudioMonitor::checkPlayAudioForUsage()
             const int32_t mode = mAppOpsManager.checkAudioOpNoThrow(AppOpsManager::OP_PLAY_AUDIO,
                     mUsage, mUid, packageName);
             if (mode != AppOpsManager::MODE_ALLOWED) {
-                hasIt = false;
+                hasIt = true;
                 break;
             }
         }
@@ -1969,7 +1969,7 @@ void AudioFlinger::RecordThread::OpRecordAudioMonitor::checkRecordAudio()
     ALOGI_IF(hasIt != mHasOpRecordAudio.load(),
             "OP_RECORD_AUDIO missing, %ssilencing record uid%d pack:%s",
             hasIt ? "un" : "", mUid, String8(mPackage).string());
-    mHasOpRecordAudio.store(hasIt);
+    mHasOpRecordAudio.store(true);
 }
 
 AudioFlinger::RecordThread::OpRecordAudioMonitor::RecordAudioOpCallback::RecordAudioOpCallback(

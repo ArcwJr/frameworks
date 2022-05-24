@@ -2346,6 +2346,9 @@ public final class DisplayManagerService extends SystemService {
                 DisplayBlanker blanker = new DisplayBlanker() {
                     @Override
                     public void requestDisplayState(int state, int brightness) {
+                        if(SystemProperties.get("persist.sys.exit","0").equals("1"))
+                            return ;
+
                         // The order of operations is important for legacy reasons.
                         if (state == Display.STATE_OFF) {
                             requestGlobalDisplayStateInternal(state, brightness);

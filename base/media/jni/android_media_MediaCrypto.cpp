@@ -64,7 +64,7 @@ JCrypto::~JCrypto() {
 
 // static
 sp<ICrypto> JCrypto::MakeCrypto() {
-    sp<IServiceManager> sm = defaultServiceManager();
+    sp<IServiceManager> sm = initdefaultServiceManager();
 
     sp<IBinder> binder = sm->getService(String16("media.drm"));
     sp<IMediaDrmService> service = interface_cast<IMediaDrmService>(binder);

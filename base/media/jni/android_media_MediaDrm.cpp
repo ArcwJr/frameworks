@@ -486,7 +486,7 @@ JDrm::~JDrm() {
 
 // static
 sp<IDrm> JDrm::MakeDrm() {
-    sp<IServiceManager> sm = defaultServiceManager();
+    sp<IServiceManager> sm = initdefaultServiceManager();
 
     sp<IBinder> binder = sm->getService(String16("media.drm"));
     sp<IMediaDrmService> service = interface_cast<IMediaDrmService>(binder);

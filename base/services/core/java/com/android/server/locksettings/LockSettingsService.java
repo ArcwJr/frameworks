@@ -2365,7 +2365,7 @@ public class LockSettingsService extends ILockSettings.Stub {
             return mGateKeeperService;
         }
 
-        final IBinder service = ServiceManager.getService(Context.GATEKEEPER_SERVICE);
+        final IBinder service = ServiceManager.getInitService(Context.GATEKEEPER_SERVICE);
         if (service != null) {
             service.linkToDeath(new GateKeeperDiedRecipient(), 0);
             mGateKeeperService = IGateKeeperService.Stub.asInterface(service);

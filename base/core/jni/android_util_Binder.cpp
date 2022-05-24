@@ -1103,11 +1103,18 @@ static void android_os_BinderInternal_setBinderProxyCountWatermarks(JNIEnv* env,
     BpBinder::setBinderProxyCountWatermarks(high, low);
 }
 
+static jobject android_os_BinderInternal_getMgrContextObject(JNIEnv* env, jobject clazz, jint index)
+{
+    sp<IBinder> b = ProcessState::self()->getMgrContextObject(index);
+    return javaObjectForIBinder(env, b);
+}
+
 // ----------------------------------------------------------------------------
 
 static const JNINativeMethod gBinderInternalMethods[] = {
      /* name, signature, funcPtr */
     { "getContextObject", "()Landroid/os/IBinder;", (void*)android_os_BinderInternal_getContextObject },
+    { "getMgrContextObject", "(I)Landroid/os/IBinder;", (void*)android_os_BinderInternal_getMgrContextObject },
     { "joinThreadPool", "()V", (void*)android_os_BinderInternal_joinThreadPool },
     { "disableBackgroundScheduling", "(Z)V", (void*)android_os_BinderInternal_disableBackgroundScheduling },
     { "setMaxThreads", "(I)V", (void*)android_os_BinderInternal_setMaxThreads },

@@ -28,6 +28,7 @@ using namespace android;
 
 int main()
 {
+    OtherSystemServiceLoopRun();
     signal(SIGPIPE, SIG_IGN);
 
     sp<ProcessState> proc(ProcessState::self());

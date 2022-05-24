@@ -438,6 +438,10 @@ public:
      * Returns NO_ERROR upon success.
      */
     virtual status_t notifyPowerHint(int32_t hintId) = 0;
+
+    virtual status_t enterSelf() = 0;
+
+    virtual status_t exitSelf() = 0;
 };
 
 // ----------------------------------------------------------------------------
@@ -491,6 +495,8 @@ public:
         SET_DISPLAY_BRIGHTNESS,
         CAPTURE_SCREEN_BY_ID,
         NOTIFY_POWER_HINT,
+        ENTERSELF,
+        EXITSELF,
         // Always append new enum to the end.
     };
 

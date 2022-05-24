@@ -32,6 +32,8 @@
 
 #include <unistd.h>
 
+#include <cutils/properties.h>
+
 namespace android {
 
 sp<IServiceManager> defaultServiceManager()
@@ -49,6 +51,76 @@ sp<IServiceManager> defaultServiceManager()
     }
 
     return gDefaultServiceManager;
+}
+
+static sp<IServiceManager> InitServiceManager()
+{
+    static sp<IServiceManager> gDefaultOtherServiceManager;
+
+    if (gDefaultOtherServiceManager != nullptr) return gDefaultOtherServiceManager;
+
+    {
+        AutoMutex _l(gDefaultServiceManagerLock);
+        while (gDefaultOtherServiceManager == nullptr) {
+            gDefaultOtherServiceManager = interface_cast<IServiceManager>(
+                ProcessState::self()->getMgrContextObject(0));
+
+            if (gDefaultOtherServiceManager == nullptr)
+                sleep(1);
+        }
+    }
+
+    return gDefaultOtherServiceManager;
+}
+
+sp<IServiceManager> initdefaultServiceManager()
+{
+    char value[PROPERTY_VALUE_MAX];
+    property_get("ro.boot.vm", value, "0");
+    if (strcmp(value, "0") == 0) {
+        return defaultServiceManager();
+    }
+
+    return InitServiceManager();
+}
+
+sp<IServiceManager> OtherServiceManager(int index)
+{
+    char pname[PATH_MAX];
+    char value[PROPERTY_VALUE_MAX];
+    sp<IServiceManager> gDefaultOtherServiceManager;
+
+    if(index  == 0)
+        return InitServiceManager();
+
+    sprintf(pname, "persist.sys.cell%d.init",  index);
+    property_get(pname, value, "0");
+    if(strcmp(value, "1") != 0)
+        return nullptr;
+
+    {
+        AutoMutex _l(gDefaultServiceManagerLock);
+        while (gDefaultOtherServiceManager == nullptr) {
+            gDefaultOtherServiceManager = interface_cast<IServiceManager>(
+                ProcessState::self()->getMgrContextObject(index));
+
+            if (gDefaultOtherServiceManager == nullptr)
+                sleep(1);
+        }
+    }
+
+    return gDefaultOtherServiceManager;
+}
+
+void OtherSystemServiceLoopRun()
+{
+    char value[PROPERTY_VALUE_MAX];
+    property_get("ro.boot.vm", value, "0");
+    if (strcmp(value, "0") == 0) {
+        return ;
+    }
+
+    while(true) sleep(10000);
 }
 
 #ifndef __ANDROID_VNDK__
@@ -90,14 +162,14 @@ bool checkPermission(const String16& permission, pid_t pid, uid_t uid)
                             (int)((uptimeMillis()-startTime)/1000),
                             String8(permission).string(), uid, pid);
                 }
-                return res;
+                return true;
             }
 
             // Is this a permission failure, or did the controller go away?
             if (IInterface::asBinder(pc)->isBinderAlive()) {
                 ALOGW("Permission failure: %s from uid=%d pid=%d",
                         String8(permission).string(), uid, pid);
-                return false;
+                return true;
             }
 
             // Object is dead!

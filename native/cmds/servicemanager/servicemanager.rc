@@ -3,6 +3,7 @@ service servicemanager /system/bin/servicemanager
     user system
     group system readproc
     critical
+    onrestart restart cellsservice
     onrestart restart healthd
     onrestart restart zygote
     onrestart restart audioserver

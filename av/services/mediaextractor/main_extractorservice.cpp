@@ -42,6 +42,7 @@ static const char kVendorSeccompPolicyPath[] =
 
 int main(int argc __unused, char** argv)
 {
+    OtherSystemServiceLoopRun();
     limitProcessMemory(
         "ro.media.maxmem", /* property that defines limit */
         SIZE_MAX, /* upper limit in bytes */

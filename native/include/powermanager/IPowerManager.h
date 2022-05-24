@@ -69,6 +69,7 @@ public:
     virtual status_t reboot(bool confirm, const String16& reason, bool wait) = 0;
     virtual status_t shutdown(bool confirm, const String16& reason, bool wait) = 0;
     virtual status_t crash(const String16& message) = 0;
+    virtual status_t wakeUp(int64_t event_time_ms, int reason, const String16& details, const String16& opPackageName) = 0;
 };
 
 // ----------------------------------------------------------------------------

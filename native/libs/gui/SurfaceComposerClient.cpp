@@ -66,7 +66,7 @@ ComposerService::ComposerService()
 
 void ComposerService::connectLocked() {
     const String16 name("SurfaceFlinger");
-    while (getService(name, &mComposerService) != NO_ERROR) {
+    while (getInitService(name, &mComposerService) != NO_ERROR) {
         usleep(250000);
     }
     assert(mComposerService != nullptr);

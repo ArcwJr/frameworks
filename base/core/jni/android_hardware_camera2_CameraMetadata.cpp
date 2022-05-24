@@ -853,7 +853,7 @@ static jint CameraMetadata_getTypeFromTag(JNIEnv *env, jobject thiz, jint tag, j
 static jint CameraMetadata_setupGlobalVendorTagDescriptor(JNIEnv *env, jobject thiz) {
     const String16 NAME("media.camera");
     sp<hardware::ICameraService> cameraService;
-    status_t err = getService(NAME, /*out*/&cameraService);
+    status_t err = getInitService(NAME, /*out*/&cameraService);
 
     if (err != OK) {
         ALOGE("%s: Failed to get camera service, received error %s (%d)", __FUNCTION__,

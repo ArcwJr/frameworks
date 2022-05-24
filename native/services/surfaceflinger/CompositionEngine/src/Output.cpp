@@ -201,10 +201,10 @@ Region Output::getDirtyRegion(bool repaintEverything) const {
     return dirty;
 }
 
-bool Output::belongsInOutput(uint32_t layerStackId, bool internalOnly) const {
+bool Output::belongsInOutput(uint32_t layerStackId, const String8& activesystemname, const String8& systemname, bool internalOnly) const {
     // The layerStackId's must match, and also the layer must not be internal
     // only when not on an internal output.
-    return (layerStackId == mState.layerStackId) && (!internalOnly || mState.layerStackInternal);
+    return (layerStackId == mState.layerStackId) && (activesystemname == systemname) && (!internalOnly || mState.layerStackInternal);
 }
 
 compositionengine::OutputLayer* Output::getOutputLayerForLayer(

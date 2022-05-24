@@ -181,7 +181,7 @@ MediaCodec::ResourceManagerServiceProxy::~ResourceManagerServiceProxy() {
 }
 
 void MediaCodec::ResourceManagerServiceProxy::init() {
-    sp<IServiceManager> sm = defaultServiceManager();
+    sp<IServiceManager> sm = initdefaultServiceManager();
     sp<IBinder> binder = sm->getService(String16("media.resource_manager"));
     mService = interface_cast<IResourceManagerService>(binder);
     if (mService == NULL) {

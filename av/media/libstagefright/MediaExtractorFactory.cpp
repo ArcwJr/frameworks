@@ -51,7 +51,7 @@ sp<IMediaExtractor> MediaExtractorFactory::Create(
     } else {
         // remote extractor
         ALOGV("get service manager");
-        sp<IBinder> binder = defaultServiceManager()->getService(String16("media.extractor"));
+        sp<IBinder> binder = initdefaultServiceManager()->getService(String16("media.extractor"));
 
         if (binder != 0) {
             sp<IMediaExtractorService> mediaExService(interface_cast<IMediaExtractorService>(binder));
@@ -325,7 +325,7 @@ std::unordered_set<std::string> MediaExtractorFactory::getSupportedTypes() {
         return gSupportedExtensions;
     }
     ALOGV("get service manager");
-    sp<IBinder> binder = defaultServiceManager()->getService(String16("media.extractor"));
+    sp<IBinder> binder = initdefaultServiceManager()->getService(String16("media.extractor"));
 
     if (binder != 0) {
         sp<IMediaExtractorService> mediaExService(interface_cast<IMediaExtractorService>(binder));

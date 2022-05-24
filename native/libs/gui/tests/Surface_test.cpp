@@ -831,6 +831,12 @@ public:
         return NO_ERROR;
     }
     status_t notifyPowerHint(int32_t /*hintId*/) override { return NO_ERROR; }
+    status_t enterSelf() override {
+        return NO_ERROR;
+    }
+    status_t exitSelf() override {
+        return NO_ERROR;
+    }
 
 protected:
     IBinder* onAsBinder() override { return nullptr; }

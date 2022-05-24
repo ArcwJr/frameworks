@@ -195,7 +195,7 @@ public class DisplayTransformManager {
      * Propagates the provided color transformation matrix to the SurfaceFlinger.
      */
     private static void applyColorMatrix(float[] m) {
-        final IBinder flinger = ServiceManager.getService(SURFACE_FLINGER);
+        final IBinder flinger = ServiceManager.getInitService(SURFACE_FLINGER);
         if (flinger != null) {
             final Parcel data = Parcel.obtain();
             data.writeInterfaceToken("android.ui.ISurfaceComposer");
@@ -221,7 +221,7 @@ public class DisplayTransformManager {
      * Propagates the provided Daltonization mode to the SurfaceFlinger.
      */
     private static void applyDaltonizerMode(int mode) {
-        final IBinder flinger = ServiceManager.getService(SURFACE_FLINGER);
+        final IBinder flinger = ServiceManager.getInitService(SURFACE_FLINGER);
         if (flinger != null) {
             final Parcel data = Parcel.obtain();
             data.writeInterfaceToken("android.ui.ISurfaceComposer");
@@ -286,7 +286,7 @@ public class DisplayTransformManager {
      * #SURFACE_FLINGER_TRANSACTION_QUERY_COLOR_MANAGED}.
      */
     public boolean isDeviceColorManaged() {
-        final IBinder flinger = ServiceManager.getService(SURFACE_FLINGER);
+        final IBinder flinger = ServiceManager.getInitService(SURFACE_FLINGER);
         if (flinger != null) {
             final Parcel data = Parcel.obtain();
             final Parcel reply = Parcel.obtain();
@@ -309,7 +309,7 @@ public class DisplayTransformManager {
      */
     private void applySaturation(float saturation) {
         SystemProperties.set(PERSISTENT_PROPERTY_SATURATION, Float.toString(saturation));
-        final IBinder flinger = ServiceManager.getService(SURFACE_FLINGER);
+        final IBinder flinger = ServiceManager.getInitService(SURFACE_FLINGER);
         if (flinger != null) {
             final Parcel data = Parcel.obtain();
             data.writeInterfaceToken("android.ui.ISurfaceComposer");
@@ -334,7 +334,7 @@ public class DisplayTransformManager {
                 Integer.toString(compositionColorMode));
         }
 
-        final IBinder flinger = ServiceManager.getService(SURFACE_FLINGER);
+        final IBinder flinger = ServiceManager.getInitService(SURFACE_FLINGER);
         if (flinger != null) {
             final Parcel data = Parcel.obtain();
             data.writeInterfaceToken("android.ui.ISurfaceComposer");

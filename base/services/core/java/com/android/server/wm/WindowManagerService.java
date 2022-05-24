@@ -3319,7 +3319,7 @@ public class WindowManagerService extends IWindowManager.Stub
             }
 
             try {
-                IBinder surfaceFlinger = ServiceManager.getService("SurfaceFlinger");
+                IBinder surfaceFlinger = ServiceManager.getInitService("SurfaceFlinger");
                 if (surfaceFlinger != null) {
                     Slog.i(TAG_WM, "******* TELLING SURFACE FLINGER WE ARE BOOTED!");
                     Parcel data = Parcel.obtain();

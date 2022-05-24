@@ -32,6 +32,7 @@
 #include <log/log.h>
 #include <system/window.h>
 #include <ui/GraphicTypes.h>
+#include <cutils/properties.h>
 
 #include "DisplayDevice.h"
 #include "Layer.h"
@@ -297,6 +298,7 @@ void DisplayDevice::dump(std::string& result) const {
     StringAppendF(&result, "+ %s\n", getDebugName().c_str());
 
     result.append("   ");
+    StringAppendF(&result, "activeSystemName=%s, ", getActiveSystemName().c_str());
     StringAppendF(&result, "powerMode=%d, ", mPowerMode);
     StringAppendF(&result, "activeConfig=%d, ", mActiveConfig);
     StringAppendF(&result, "numLayers=%zu\n", mVisibleLayersSortedByZ.size());
@@ -375,6 +377,12 @@ int DisplayDevice::getSupportedPerFrameMetadata() const {
 
 const HdrCapabilities& DisplayDevice::getHdrCapabilities() const {
     return mCompositionDisplay->getDisplayColorProfile()->getHdrCapabilities();
+}
+
+String8 DisplayDevice::getActiveSystemName() const{
+    char value[PROPERTY_VALUE_MAX];
+    property_get("persist.sys.active", value, "");
+    return String8(value);
 }
 
 std::atomic<int32_t> DisplayDeviceState::sNextSequenceId(1);

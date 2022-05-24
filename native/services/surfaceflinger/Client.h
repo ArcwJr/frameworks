@@ -56,7 +56,18 @@ private:
                                    LayerMetadata metadata, sp<IBinder>* handle,
                                    sp<IGraphicBufferProducer>* gbp);
 
+    virtual status_t createSurfaceX(const String8& name, const String8& systemname, uint32_t w, uint32_t h, PixelFormat format,
+                                   uint32_t flags, const sp<IBinder>& parent,
+                                   LayerMetadata metadata, sp<IBinder>* handle,
+                                   sp<IGraphicBufferProducer>* gbp);
+
     virtual status_t createWithSurfaceParent(const String8& name, uint32_t w, uint32_t h,
+                                             PixelFormat format, uint32_t flags,
+                                             const sp<IGraphicBufferProducer>& parent,
+                                             LayerMetadata metadata, sp<IBinder>* handle,
+                                             sp<IGraphicBufferProducer>* gbp);
+
+    virtual status_t createWithSurfaceParentX(const String8& name, const String8& systemname, uint32_t w, uint32_t h,
                                              PixelFormat format, uint32_t flags,
                                              const sp<IGraphicBufferProducer>& parent,
                                              LayerMetadata metadata, sp<IBinder>* handle,

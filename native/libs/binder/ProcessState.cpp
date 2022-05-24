@@ -42,6 +42,7 @@
 
 #define BINDER_VM_SIZE ((1 * 1024 * 1024) - sysconf(_SC_PAGE_SIZE) * 2)
 #define DEFAULT_MAX_BINDER_THREADS 15
+#define INIT_SYSTEM_CONTEXT_MGR_HANDLE 100000000
 
 #ifdef __ANDROID_VNDK__
 const char* kDefaultDriver = "/dev/vndbinder";
@@ -116,6 +117,15 @@ void ProcessState::setContextObject(const sp<IBinder>& object)
 sp<IBinder> ProcessState::getContextObject(const sp<IBinder>& /*caller*/)
 {
     return getStrongProxyForHandle(0);
+}
+
+sp<IBinder> ProcessState::getMgrContextObject(int index)
+{
+    sp<IBinder> result;
+    if(index < 0 || index >= MAX_CONTEXT)
+        return result;
+
+    return getStrongProxyForHandle(INIT_SYSTEM_CONTEXT_MGR_HANDLE + index);
 }
 
 void ProcessState::setContextObject(const sp<IBinder>& object, const String16& name)
@@ -245,6 +255,10 @@ void ProcessState::setCallRestriction(CallRestriction restriction) {
 
 ProcessState::handle_entry* ProcessState::lookupHandleLocked(int32_t handle)
 {
+    if(handle >= INIT_SYSTEM_CONTEXT_MGR_HANDLE){
+        return &mSystemContextMgrHandle[handle - INIT_SYSTEM_CONTEXT_MGR_HANDLE];
+    }
+
     const size_t N=mHandleToObject.size();
     if (N <= (size_t)handle) {
         handle_entry e;
@@ -270,7 +284,7 @@ sp<IBinder> ProcessState::getStrongProxyForHandle(int32_t handle)
         // in getWeakProxyForHandle() for more info about this.
         IBinder* b = e->binder;
         if (b == nullptr || !e->refs->attemptIncWeak(this)) {
-            if (handle == 0) {
+            if (handle == 0 ||  handle >= INIT_SYSTEM_CONTEXT_MGR_HANDLE) {
                 // Special case for context manager...
                 // The context manager is the only object for which we create
                 // a BpBinder proxy without already holding a reference.
@@ -292,7 +306,7 @@ sp<IBinder> ProcessState::getStrongProxyForHandle(int32_t handle)
 
                 Parcel data;
                 status_t status = IPCThreadState::self()->transact(
-                        0, IBinder::PING_TRANSACTION, data, nullptr, 0);
+                        handle, IBinder::PING_TRANSACTION, data, nullptr, 0);
                 if (status == DEAD_OBJECT)
                    return nullptr;
             }
@@ -447,6 +461,12 @@ ProcessState::ProcessState(const char *driver)
             mDriverFD = -1;
             mDriverName.clear();
         }
+    }
+
+    for(int i=0; i < MAX_CONTEXT; i++)
+    {
+        mSystemContextMgrHandle[i].binder = nullptr;
+        mSystemContextMgrHandle[i].refs = nullptr;
     }
 
     LOG_ALWAYS_FATAL_IF(mDriverFD < 0, "Binder driver could not be opened.  Terminating.");

@@ -81,7 +81,7 @@ sp<hardware::ICameraService> CameraManagerGlobal::getCameraService() {
             return mCameraService;
         }
 
-        sp<IServiceManager> sm = defaultServiceManager();
+        sp<IServiceManager> sm = initdefaultServiceManager();
         sp<IBinder> binder;
         do {
             binder = sm->getService(String16(kCameraServiceName));

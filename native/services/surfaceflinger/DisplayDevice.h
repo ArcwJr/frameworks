@@ -86,6 +86,8 @@ public:
     int         getHeight() const;
     int         getInstallOrientation() const { return mDisplayInstallOrientation; }
 
+    String8 getActiveSystemName() const;
+
     void                    setVisibleLayersSortedByZ(const Vector< sp<Layer> >& layers);
     const Vector< sp<Layer> >& getVisibleLayersSortedByZ() const;
     void                    setLayersNeedingFences(const Vector< sp<Layer> >& layers);

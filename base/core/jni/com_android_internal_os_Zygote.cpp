@@ -286,7 +286,7 @@ static std::array<UsapTableEntry, USAP_POOL_SIZE_MAX_LIMIT> gUsapTable;
 /**
  * The list of open zygote file descriptors.
  */
-static FileDescriptorTable* gOpenFdTable = nullptr;
+//static FileDescriptorTable* gOpenFdTable = nullptr;
 
 // Must match values in com.android.internal.os.Zygote.
 enum MountExternalKind {
@@ -925,11 +925,11 @@ static pid_t ForkCommon(JNIEnv* env, bool is_system_server,
   // If this is the first fork for this zygote, create the open FD table.  If
   // it isn't, we just need to check whether the list of open files has changed
   // (and it shouldn't in the normal case).
-  if (gOpenFdTable == nullptr) {
+  /*if (gOpenFdTable == nullptr) {
     gOpenFdTable = FileDescriptorTable::Create(fds_to_ignore, fail_fn);
   } else {
     gOpenFdTable->Restat(fds_to_ignore, fail_fn);
-  }
+  }*/
 
   android_fdsan_error_level fdsan_error_level = android_fdsan_get_error_level();
 
@@ -947,7 +947,7 @@ static pid_t ForkCommon(JNIEnv* env, bool is_system_server,
 
     // Re-open all remaining open file descriptors so that they aren't shared
     // with the zygote across a fork.
-    gOpenFdTable->ReopenOrDetach(fail_fn);
+    //gOpenFdTable->ReopenOrDetach(fail_fn);
 
     // Turn fdsan back on.
     android_fdsan_set_error_level(fdsan_error_level);

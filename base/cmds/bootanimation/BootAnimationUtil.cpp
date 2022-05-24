@@ -55,7 +55,7 @@ bool bootAnimationDisabled() {
 void waitForSurfaceFlinger() {
     // TODO: replace this with better waiting logic in future, b/35253872
     int64_t waitStartTime = elapsedRealtime();
-    sp<IServiceManager> sm = defaultServiceManager();
+    sp<IServiceManager> sm = initdefaultServiceManager();
     const String16 name("SurfaceFlinger");
     const int SERVICE_WAIT_SLEEP_MS = 100;
     const int LOG_PER_RETRIES = 10;

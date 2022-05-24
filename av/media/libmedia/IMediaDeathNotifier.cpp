@@ -37,7 +37,7 @@ IMediaDeathNotifier::getMediaPlayerService()
     ALOGV("getMediaPlayerService");
     Mutex::Autolock _l(sServiceLock);
     if (sMediaPlayerService == 0) {
-        sp<IServiceManager> sm = defaultServiceManager();
+        sp<IServiceManager> sm = initdefaultServiceManager();
         sp<IBinder> binder;
         do {
             binder = sm->getService(String16("media.player"));

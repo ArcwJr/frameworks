@@ -157,6 +157,7 @@ import com.android.server.webkit.WebViewUpdateService;
 import com.android.server.wm.ActivityTaskManagerService;
 import com.android.server.wm.WindowManagerGlobalLock;
 import com.android.server.wm.WindowManagerService;
+import com.android.server.CellsService;
 
 import dalvik.system.VMRuntime;
 
@@ -894,6 +895,7 @@ public final class SystemServer {
         ConsumerIrService consumerIr = null;
         MmsServiceBroker mmsService = null;
         HardwarePropertiesManagerService hardwarePropertiesService = null;
+        CellsService cellsService = null;
 
         boolean disableSystemTextClassifier = SystemProperties.getBoolean(
                 "config.disable_systemtextclassifier", false);
@@ -1040,6 +1042,7 @@ public final class SystemServer {
             // Start receiving calls from HIDL services. Start in in a separate thread
             // because it need to connect to SensorManager. This have to start
             // after START_SENSOR_SERVICE is done.
+            if(SystemProperties.get("ro.boot.vm","0").equals("0")){
             SystemServerInitThreadPool.get().submit(() -> {
                 TimingsTraceLog traceLog = new TimingsTraceLog(
                         SYSTEM_SERVER_TIMING_ASYNC_TAG, Trace.TRACE_TAG_SYSTEM_SERVER);
@@ -1047,6 +1050,7 @@ public final class SystemServer {
                 startHidlServices();
                 traceLog.traceEnd();
             }, START_HIDL_SERVICES);
+            }
 
             if (!isWatch && enableVrService) {
                 traceBeginAndSlog("StartVrManagerService");
@@ -1330,6 +1334,7 @@ public final class SystemServer {
             }
             traceEnd();
 
+            if(SystemProperties.get("ro.boot.vm","0").equals("0")){
             if (context.getPackageManager().hasSystemFeature(
                     PackageManager.FEATURE_WIFI)) {
                 // Wifi Service must be started first for wifi-related services.
@@ -1376,6 +1381,7 @@ public final class SystemServer {
                 traceBeginAndSlog("StartEthernet");
                 mSystemServiceManager.startService(ETHERNET_SERVICE_CLASS);
                 traceEnd();
+            }
             }
 
             traceBeginAndSlog("StartConnectivityService");
@@ -1830,6 +1836,15 @@ public final class SystemServer {
             traceBeginAndSlog("StartCrossProfileAppsService");
             mSystemServiceManager.startService(CrossProfileAppsService.class);
             traceEnd();
+
+            try {
+                Slog.i(TAG, "cells Service");
+                cellsService = new CellsService(context);
+                ServiceManager.addService(Context.CELLS_SERVICE,cellsService);
+            } catch (Throwable e) {
+                reportWtf("starting CellsService", e);
+            }
+
         }
 
         if (!isWatch) {
@@ -2037,6 +2052,7 @@ public final class SystemServer {
         final MmsServiceBroker mmsServiceF = mmsService;
         final IpSecService ipSecServiceF = ipSecService;
         final WindowManagerService windowManagerF = wm;
+        final CellsService cellsServiceF = cellsService;
 
         // We now tell the activity manager it is okay to run third party
         // code.  It will call back into us once it has gotten to the state
@@ -2142,6 +2158,7 @@ public final class SystemServer {
                 reportWtf("making Connectivity Service ready", e);
             }
             traceEnd();
+            if (SystemProperties.get("ro.boot.vm","0").equals("0")) {
             traceBeginAndSlog("MakeNetworkPolicyServiceReady");
             try {
                 if (networkPolicyF != null) {
@@ -2151,6 +2168,7 @@ public final class SystemServer {
                 reportWtf("making Network Policy Service ready", e);
             }
             traceEnd();
+            }
 
             // Wait for all packages to be prepared
             mPackageManagerService.waitForAppDataPrepared();
@@ -2257,6 +2275,13 @@ public final class SystemServer {
                 reportWtf("Notifying incident daemon running", e);
             }
             traceEnd();
+
+            try {
+                if (cellsServiceF != null) cellsServiceF.systemReady();
+            } catch (Throwable e) {
+                reportWtf("CellsService running", e);
+            }
+
         }, BOOT_TIMINGS_TRACE_LOG);
     }
 

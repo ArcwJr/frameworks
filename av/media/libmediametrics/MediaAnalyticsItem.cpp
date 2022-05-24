@@ -997,7 +997,7 @@ sp<IMediaAnalyticsService> MediaAnalyticsItem::getInstance() {
         // (1) we haven't tried to initialize it yet
         // (2) we've tried to initialize it, but failed.
         if (sAnalyticsService == NULL && remainingBindAttempts > 0) {
-            sp<IServiceManager> sm = defaultServiceManager();
+            sp<IServiceManager> sm = initdefaultServiceManager();
             if (sm != NULL) {
                 sp<IBinder> binder = sm->getService(String16(servicename));
                 if (binder != NULL) {

@@ -977,6 +977,20 @@ public:
         }
         return NO_ERROR;
     }
+
+    virtual status_t enterSelf() {
+        Parcel data, reply;
+        data.writeInterfaceToken(ISurfaceComposer::getInterfaceDescriptor());
+        remote()->transact(BnSurfaceComposer::ENTERSELF, data, &reply);
+        return reply.readInt32();
+    }
+
+    virtual status_t exitSelf() {
+        Parcel data, reply;
+        data.writeInterfaceToken(ISurfaceComposer::getInterfaceDescriptor());
+        remote()->transact(BnSurfaceComposer::EXITSELF, data, &reply);
+        return reply.readInt32();
+    }
 };
 
 // Out-of-line virtual method definition to trigger vtable emission in this
@@ -1590,6 +1604,18 @@ status_t BnSurfaceComposer::onTransact(
                 return error;
             }
             return notifyPowerHint(hintId);
+        }
+        case ENTERSELF: {
+            CHECK_INTERFACE(ISurfaceComposer, data, reply);
+            status_t result = enterSelf();
+            reply->writeInt32(result);
+            return NO_ERROR;
+        }
+        case EXITSELF: {
+            CHECK_INTERFACE(ISurfaceComposer, data, reply);
+            status_t result = exitSelf();
+            reply->writeInt32(result);
+            return NO_ERROR;
         }
         default: {
             return BBinder::onTransact(code, data, reply, flags);

@@ -50,7 +50,7 @@ public class WifiCommand extends Svc.Command {
             }
             if (validCommand) {
                 IWifiManager wifiMgr
-                        = IWifiManager.Stub.asInterface(ServiceManager.getService(Context.WIFI_SERVICE));
+                        = IWifiManager.Stub.asInterface(ServiceManager.getInitService(Context.WIFI_SERVICE));
                 if (wifiMgr == null) {
                     System.err.println("Wi-Fi service is not ready");
                     return;

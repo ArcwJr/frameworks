@@ -58,7 +58,7 @@ const sp<IDrmManagerService>& DrmManagerClientImpl::getDrmManagerService() {
             return sDrmManagerService;
         }
 
-        sp<IServiceManager> sm = defaultServiceManager();
+        sp<IServiceManager> sm = initdefaultServiceManager();
         sp<IBinder> binder;
         do {
             binder = sm->getService(String16("drm.drmManager"));

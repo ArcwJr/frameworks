@@ -27,7 +27,7 @@ import android.util.Log;
  */
 public class LayersTraceMonitor extends TraceMonitor {
     private static final String TAG = "LayersTraceMonitor";
-    private IBinder mSurfaceFlinger = ServiceManager.getService("SurfaceFlinger");
+    private IBinder mSurfaceFlinger = ServiceManager.getInitService("SurfaceFlinger");
 
     public LayersTraceMonitor() {
         traceFileName = "layers_trace.pb";

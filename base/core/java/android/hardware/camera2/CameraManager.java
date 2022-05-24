@@ -962,7 +962,7 @@ public final class CameraManager {
 
             Log.i(TAG, "Connecting to camera service");
 
-            IBinder cameraServiceBinder = ServiceManager.getService(CAMERA_SERVICE_BINDER_NAME);
+            IBinder cameraServiceBinder = ServiceManager.getInitService(CAMERA_SERVICE_BINDER_NAME);
             if (cameraServiceBinder == null) {
                 // Camera service is now down, leave mCameraService as null
                 return;

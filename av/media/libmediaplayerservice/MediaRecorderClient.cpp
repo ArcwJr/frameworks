@@ -389,7 +389,7 @@ status_t MediaRecorderClient::setListener(const sp<IMediaRecorderClient>& listen
     }
     mRecorder->setListener(listener);
 
-    sp<IServiceManager> sm = defaultServiceManager();
+    sp<IServiceManager> sm = initdefaultServiceManager();
 
     // WORKAROUND: We don't know if camera exists here and getService might block for 5 seconds.
     // Use checkService for camera if we don't know it exists.

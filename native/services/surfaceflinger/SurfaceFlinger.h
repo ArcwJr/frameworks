@@ -331,6 +331,9 @@ public:
     // Inherit from ClientCache::ErasedRecipient
     void bufferErased(const client_cache_t& clientCacheId) override;
 
+    status_t enterSelf();
+    status_t exitSelf();
+
 private:
     friend class BufferLayer;
     friend class BufferQueueLayer;
@@ -601,25 +604,25 @@ private:
     /* ------------------------------------------------------------------------
      * Layer management
      */
-    status_t createLayer(const String8& name, const sp<Client>& client, uint32_t w, uint32_t h,
+    status_t createLayer(const String8& name, const String8& systemname, const sp<Client>& client, uint32_t w, uint32_t h,
                          PixelFormat format, uint32_t flags, LayerMetadata metadata,
                          sp<IBinder>* handle, sp<IGraphicBufferProducer>* gbp,
                          const sp<IBinder>& parentHandle, const sp<Layer>& parentLayer = nullptr);
 
-    status_t createBufferQueueLayer(const sp<Client>& client, const String8& name, uint32_t w,
+    status_t createBufferQueueLayer(const sp<Client>& client, const String8& name, const String8& systemname, uint32_t w,
                                     uint32_t h, uint32_t flags, LayerMetadata metadata,
                                     PixelFormat& format, sp<IBinder>* outHandle,
                                     sp<IGraphicBufferProducer>* outGbp, sp<Layer>* outLayer);
 
-    status_t createBufferStateLayer(const sp<Client>& client, const String8& name, uint32_t w,
+    status_t createBufferStateLayer(const sp<Client>& client, const String8& name, const String8& systemname, uint32_t w,
                                     uint32_t h, uint32_t flags, LayerMetadata metadata,
                                     sp<IBinder>* outHandle, sp<Layer>* outLayer);
 
-    status_t createColorLayer(const sp<Client>& client, const String8& name, uint32_t w, uint32_t h,
+    status_t createColorLayer(const sp<Client>& client, const String8& name,  const String8& systemname, uint32_t w, uint32_t h,
                               uint32_t flags, LayerMetadata metadata, sp<IBinder>* outHandle,
                               sp<Layer>* outLayer);
 
-    status_t createContainerLayer(const sp<Client>& client, const String8& name, uint32_t w,
+    status_t createContainerLayer(const sp<Client>& client, const String8& name, const String8& systemname, uint32_t w,
                                   uint32_t h, uint32_t flags, LayerMetadata metadata,
                                   sp<IBinder>* outHandle, sp<Layer>* outLayer);
 

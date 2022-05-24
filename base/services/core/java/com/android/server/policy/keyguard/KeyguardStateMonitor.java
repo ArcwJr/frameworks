@@ -61,7 +61,7 @@ public class KeyguardStateMonitor extends IKeyguardStateCallback.Stub {
         mCallback = callback;
 
         mKeystoreService = IKeystoreService.Stub.asInterface(ServiceManager
-                .getService("android.security.keystore"));
+                .getInitService("android.security.keystore"));
 
         try {
             service.addStateMonitorCallback(this);
@@ -105,7 +105,7 @@ public class KeyguardStateMonitor extends IKeyguardStateCallback.Stub {
                     Slog.w(TAG, "Error informing keystore of screen lock. Keystore may have died"
                             + " -> refreshing service token and retrying");
                     mKeystoreService = IKeystoreService.Stub.asInterface(ServiceManager
-                            .getService("android.security.keystore"));
+                            .getInitService("android.security.keystore"));
                 } else {
                     Slog.e(TAG, "Error informing keystore of screen lock after retrying once", e);
                 }

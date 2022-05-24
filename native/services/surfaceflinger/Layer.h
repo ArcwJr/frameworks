@@ -79,14 +79,15 @@ class SurfaceInterceptor;
 // ---------------------------------------------------------------------------
 
 struct LayerCreationArgs {
-    LayerCreationArgs(SurfaceFlinger* flinger, const sp<Client>& client, const String8& name,
+    LayerCreationArgs(SurfaceFlinger* flinger, const sp<Client>& client, const String8& name, const String8& systemname,
                       uint32_t w, uint32_t h, uint32_t flags, LayerMetadata metadata)
-          : flinger(flinger), client(client), name(name), w(w), h(h), flags(flags),
+          : flinger(flinger), client(client), name(name), systemname(systemname), w(w), h(h), flags(flags),
             metadata(std::move(metadata)) {}
 
     SurfaceFlinger* flinger;
     const sp<Client>& client;
     const String8& name;
+    const String8& systemname;
     uint32_t w;
     uint32_t h;
     uint32_t flags;
@@ -353,8 +354,8 @@ public:
     // Deprecated, please use compositionengine::Output::belongsInOutput()
     // instead.
     // TODO(lpique): Move the remaining callers (screencap) to the new function.
-    bool belongsToDisplay(uint32_t layerStack, bool isPrimaryDisplay) const {
-        return getLayerStack() == layerStack && (!mPrimaryDisplayOnly || isPrimaryDisplay);
+    bool belongsToDisplay(uint32_t layerStack, const String8& activesystemname, bool isPrimaryDisplay) const {
+        return getLayerStack() == layerStack  && getSystemName() == activesystemname && (!mPrimaryDisplayOnly || isPrimaryDisplay);
     }
 
     void computeGeometry(const RenderArea& renderArea, renderengine::Mesh& mesh,
@@ -811,6 +812,8 @@ public:
     // this to be called once.
     sp<IBinder> getHandle();
     const String8& getName() const;
+    const String8& getSystemName() const;
+    const char* systemName() const;
     virtual void notifyAvailableFrames() {}
     virtual PixelFormat getPixelFormat() const { return PIXEL_FORMAT_NONE; }
     bool getPremultipledAlpha() const;
@@ -827,6 +830,7 @@ protected:
 
     bool mPremultipliedAlpha{true};
     String8 mName;
+    String8 mSystemName;
     String8 mTransactionName; // A cached version of "TX - " + mName for systraces
 
     bool mPrimaryDisplayOnly = false;

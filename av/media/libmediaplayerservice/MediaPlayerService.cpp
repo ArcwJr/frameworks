@@ -672,7 +672,7 @@ sp<MediaPlayerBase> MediaPlayerService::Client::setDataSource_pre(
     std::vector<DeathNotifier> deathNotifiers;
 
     // Listen to death of media.extractor service
-    sp<IServiceManager> sm = defaultServiceManager();
+    sp<IServiceManager> sm = initdefaultServiceManager();
     sp<IBinder> binder = sm->getService(String16("media.extractor"));
     if (binder == NULL) {
         ALOGE("extractor service not available");

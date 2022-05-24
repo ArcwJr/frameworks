@@ -139,7 +139,7 @@ static jlong nativeListen(JNIEnv* env, jobject remoteDisplayObj, jstring ifaceSt
     ScopedUtfChars iface(env, ifaceStr);
     ScopedUtfChars opPackageName(env, opPackageNameStr);
 
-    sp<IServiceManager> sm = defaultServiceManager();
+    sp<IServiceManager> sm = initdefaultServiceManager();
     sp<IMediaPlayerService> service = interface_cast<IMediaPlayerService>(
             sm->getService(String16("media.player")));
     if (service == NULL) {

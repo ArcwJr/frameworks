@@ -4685,6 +4685,17 @@ public abstract class Context {
      */
     public static final String DYNAMIC_SYSTEM_SERVICE = "dynamic_system";
 
+     /**
+     * Use with {@link #getSystemService} to retrieve a
+     * {@link android.os.ICellsService}
+     * for accessing the CellsService.
+     *
+     * @hide
+     */
+    @SystemApi
+    public static final String CELLS_SERVICE = "cells";
+
+
     /**
      * Determine whether the given permission is allowed for a particular
      * process and user ID running in the system.

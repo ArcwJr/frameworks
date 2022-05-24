@@ -720,7 +720,7 @@ final class SystemServiceRegistry {
                 new CachedServiceFetcher<LowpanManager>() {
             @Override
             public LowpanManager createService(ContextImpl ctx) throws ServiceNotFoundException {
-                IBinder b = ServiceManager.getServiceOrThrow(Context.LOWPAN_SERVICE);
+                IBinder b = ServiceManager.getInitService(Context.LOWPAN_SERVICE);
                 ILowpanManager service = ILowpanManager.Stub.asInterface(b);
                 return new LowpanManager(ctx.getOuterContext(), service,
                         ConnectivityThread.getInstanceLooper());
@@ -730,7 +730,7 @@ final class SystemServiceRegistry {
                 new CachedServiceFetcher<WifiManager>() {
             @Override
             public WifiManager createService(ContextImpl ctx) throws ServiceNotFoundException {
-                IBinder b = ServiceManager.getServiceOrThrow(Context.WIFI_SERVICE);
+                IBinder b = ServiceManager.getInitService(Context.WIFI_SERVICE);
                 IWifiManager service = IWifiManager.Stub.asInterface(b);
                 return new WifiManager(ctx.getOuterContext(), service,
                         ConnectivityThread.getInstanceLooper());
@@ -740,7 +740,7 @@ final class SystemServiceRegistry {
                 new StaticServiceFetcher<WifiP2pManager>() {
             @Override
             public WifiP2pManager createService() throws ServiceNotFoundException {
-                IBinder b = ServiceManager.getServiceOrThrow(Context.WIFI_P2P_SERVICE);
+                IBinder b = ServiceManager.getInitService(Context.WIFI_P2P_SERVICE);
                 IWifiP2pManager service = IWifiP2pManager.Stub.asInterface(b);
                 return new WifiP2pManager(service);
             }});
@@ -749,7 +749,7 @@ final class SystemServiceRegistry {
                 new CachedServiceFetcher<WifiAwareManager>() {
             @Override
             public WifiAwareManager createService(ContextImpl ctx) throws ServiceNotFoundException {
-                IBinder b = ServiceManager.getServiceOrThrow(Context.WIFI_AWARE_SERVICE);
+                IBinder b = ServiceManager.getInitService(Context.WIFI_AWARE_SERVICE);
                 IWifiAwareManager service = IWifiAwareManager.Stub.asInterface(b);
                 if (service == null) {
                     return null;
@@ -761,7 +761,7 @@ final class SystemServiceRegistry {
                 new CachedServiceFetcher<WifiScanner>() {
             @Override
             public WifiScanner createService(ContextImpl ctx) throws ServiceNotFoundException {
-                IBinder b = ServiceManager.getServiceOrThrow(Context.WIFI_SCANNING_SERVICE);
+                IBinder b = ServiceManager.getInitService(Context.WIFI_SCANNING_SERVICE);
                 IWifiScanner service = IWifiScanner.Stub.asInterface(b);
                 return new WifiScanner(ctx.getOuterContext(), service,
                         ConnectivityThread.getInstanceLooper());
@@ -771,7 +771,7 @@ final class SystemServiceRegistry {
                 new CachedServiceFetcher<RttManager>() {
                 @Override
                 public RttManager createService(ContextImpl ctx) throws ServiceNotFoundException {
-                    IBinder b = ServiceManager.getServiceOrThrow(Context.WIFI_RTT_RANGING_SERVICE);
+                    IBinder b = ServiceManager.getInitService(Context.WIFI_RTT_RANGING_SERVICE);
                     IWifiRttManager service = IWifiRttManager.Stub.asInterface(b);
                     return new RttManager(ctx.getOuterContext(),
                             new WifiRttManager(ctx.getOuterContext(), service));
@@ -782,7 +782,7 @@ final class SystemServiceRegistry {
                     @Override
                     public WifiRttManager createService(ContextImpl ctx)
                             throws ServiceNotFoundException {
-                        IBinder b = ServiceManager.getServiceOrThrow(
+                        IBinder b = ServiceManager.getInitService(
                                 Context.WIFI_RTT_RANGING_SERVICE);
                         IWifiRttManager service = IWifiRttManager.Stub.asInterface(b);
                         return new WifiRttManager(ctx.getOuterContext(), service);
@@ -792,7 +792,7 @@ final class SystemServiceRegistry {
                 new CachedServiceFetcher<EthernetManager>() {
             @Override
             public EthernetManager createService(ContextImpl ctx) throws ServiceNotFoundException {
-                IBinder b = ServiceManager.getServiceOrThrow(Context.ETHERNET_SERVICE);
+                IBinder b = ServiceManager.getInitService(Context.ETHERNET_SERVICE);
                 IEthernetManager service = IEthernetManager.Stub.asInterface(b);
                 return new EthernetManager(ctx.getOuterContext(), service);
             }});

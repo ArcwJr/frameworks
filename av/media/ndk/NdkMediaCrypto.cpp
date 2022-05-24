@@ -36,7 +36,7 @@
 using namespace android;
 
 static sp<ICrypto> makeCrypto() {
-    sp<IServiceManager> sm = defaultServiceManager();
+    sp<IServiceManager> sm = initdefaultServiceManager();
     sp<IBinder> binder = sm->getService(String16("media.drm"));
 
     sp<IMediaDrmService> service = interface_cast<IMediaDrmService>(binder);

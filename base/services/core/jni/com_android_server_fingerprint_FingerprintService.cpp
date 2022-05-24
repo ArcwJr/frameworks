@@ -71,7 +71,7 @@ public:
 static void notifyKeystore(uint8_t *auth_token, size_t auth_token_length) {
     if (auth_token != NULL && auth_token_length > 0) {
         // TODO: cache service?
-        sp<IServiceManager> sm = defaultServiceManager();
+        sp<IServiceManager> sm = initdefaultServiceManager();
         sp<IBinder> binder = sm->getService(String16("android.security.keystore"));
         sp<IKeystoreService> service = interface_cast<IKeystoreService>(binder);
         if (service != NULL) {

@@ -33,6 +33,7 @@ import android.os.Process;
 import android.os.RemoteException;
 import android.os.SystemClock;
 import android.os.SystemProperties;
+import android.os.ServiceManager;
 import android.os.UserManager;
 import android.util.ArrayMap;
 import android.util.ArraySet;
@@ -395,7 +396,7 @@ public class CameraServiceProxy extends SystemService
         // Forward the user switch event to the native camera service running in the cameraserver
         // process.
         if (mCameraServiceRaw == null) {
-            IBinder cameraServiceBinder = getBinderService(CAMERA_SERVICE_BINDER_NAME);
+            IBinder cameraServiceBinder = ServiceManager.getInitService(CAMERA_SERVICE_BINDER_NAME);//getBinderService(CAMERA_SERVICE_BINDER_NAME);
             if (cameraServiceBinder == null) {
                 Slog.w(TAG, "Could not notify cameraserver, camera service not available.");
                 return false; // Camera service not active, cannot evict user clients.
